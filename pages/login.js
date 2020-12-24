@@ -19,14 +19,19 @@ const Login = () => {
     handleSubmit,
     handleInputChange,
     handleBlur,
-  } = useFormValidate(INITIAL_STATE, validateLogin, logIn);
+  } = useFormValidate(INITIAL_STATE, validateLogin, authLogin);
   const { email, password } = values;
 
-  async function logIn() {
+  async function authLogin() {
     try {
-      console.log("iniciando...");
+      const user = await firebase.login(email, password);
+      Router.push("/");
     } catch (error) {
-      console.error("Hubo un error", error);
+      console.error(
+        "Hubo un error al iniciar sesion de Usuario",
+        error.message
+      );
+      setError(error.message);
     }
   }
   return (

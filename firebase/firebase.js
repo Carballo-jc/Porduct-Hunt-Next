@@ -33,7 +33,7 @@ class Firebase {
   }
 
   // Cierra la sesión del usuario
-  async cerrarSesion() {
+  async logout() {
     await this.auth.signOut();
   }
 }

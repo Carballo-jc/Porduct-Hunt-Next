@@ -3,7 +3,8 @@ import Layout from "../components/layout/Layout";
 import { css } from "@emotion/react";
 import { Campo, Error, Form, InputSubmit } from "../components/ui/Form";
 import { FirebaseContext } from "../firebase";
-import FileUploader from "react-firebase-file-uploader";
+// import FileUploader from "react-firebase-file-uploader";
+import Dropzone, { useDropzone } from "react-dropzone";
 import Router, { useRouter } from "next/router";
 
 import useFormValidate from "../hooks/useFormValidate";
@@ -61,20 +62,35 @@ const NewProduct = () => {
     await firebase.db.collection("products").add(product);
     return router.push("/");
   }
+  const onDrop = useCallback((acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
 
-  const handleUploadStart = () => {
-    setUploader(true);
-    setProgress(0);
-    console.log("handleUploadStart");
-  };
+      reader.onabort = () => console.log("file reading was aborted");
+      reader.onerror = () => console.log("file reading has failed");
+      reader.onload = () => {
+        // Do whatever you want with the file contents
+        const binaryStr = reader.result;
+        console.log(binaryStr);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }, []);
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
-  const handleProgress = (progress) => setProgress({ progress });
+  // const handleUploadStart = () => {
+  //   setUploader(true);
+  //   setProgress(0);
+  //   console.log("handleUploadStart");
+  // };
 
-  const handleUploadError = (error) => {
-    setUploader(error);
-    console.error(error);
-    console.log("handleUploadError");
-  };
+  // const handleProgress = (progress) => setProgress({ progress });
+
+  // const handleUploadError = (error) => {
+  //   setUploader(error);
+  //   console.error(error);
+  //   console.log("handleUploadError");
+  // };
 
   const handleUploadSuccess = ({ name }) => {
     console.log(firebase, "aqui");
@@ -132,8 +148,23 @@ const NewProduct = () => {
             {errors.company && <Error> El nombre es Obligatorio</Error>}
             <Campo>
               <label htmlFor="image">Imagen</label>
-
-              <FileUploader
+              <Dropzone
+                onDrop={(acceptedFiles) =>
+                  handleUploadSuccess(acceptedFiles[0])
+                }
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section>
+                    <div {...getRootProps()}>
+                      <input {...getInputProps()} />
+                      <p>
+                        Drag 'n' drop some files here, or click to select files
+                      </p>
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
+              {/* <FileUploader
                 accept="image/*"
                 name="image"
                 id="image"
@@ -143,7 +174,7 @@ const NewProduct = () => {
                 onUploadError={() => handleUploadError}
                 onUploadSuccess={() => handleUploadSuccess}
                 onProgress={() => handleProgress}
-              />
+              /> */}
             </Campo>
 
             <Campo>

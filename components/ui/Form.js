@@ -9,7 +9,7 @@ export const Form = styled.form`
     margin: 2rem 0;
     border: 1px solid #e1e1e1;
     font-size: 2rem;
-    padding: 2rem;
+    padding: 1rem;
   }
 `;
 
@@ -29,7 +29,7 @@ export const Campo = styled.div`
     padding: 1rem;
   }
   textarea {
-    height: 400px;
+    height: 300px;
   }
 `;
 
